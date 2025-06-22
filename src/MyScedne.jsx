@@ -1,0 +1,128 @@
+import React, { useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import { ProbnaFunkcja } from "./probny";
+
+function Myscene() {
+  //Funkcja oblicoznajace skranje opunkty na mapie
+  const paleta = {
+    width: 10,
+    height: 10,
+    deep: 15,
+  };
+
+  let ilość_towaru = 10;
+
+  function createSquare() {
+    let gap = 1,
+      punkt3d = [],
+      d1 = [],
+      d2 = [],
+      d3 = [];
+
+    let punkt0 = [(d1[0] = 0), (d2[0] = 0), (d3[0] = 0)];
+
+    const tabela_punktow_krancowych = [];
+    tabela_punktow_krancowych[0] = punkt0;
+
+    for (let i = 1; i < ilość_towaru; i++) {
+      d1[i] = d1[i - 1] + paleta.width + gap;
+      d2[i] = d2[i - 1];
+      d3[i] = d3[i - 1];
+      punkt3d[i] = [d1[i], d2[i], d3[i]];
+
+      tabela_punktow_krancowych.push(punkt3d[i]);
+    }
+
+    return tabela_punktow_krancowych;
+  }
+  let global_punkty = createSquare();
+
+  function InitilaSquareFunction(color) {
+    const cubes = [];
+    for (let i = 0; i < ilość_towaru; i++) {
+      let p1 = global_punkty[i][0];
+      let p2 = global_punkty[i][1];
+      let p3 = global_punkty[i][2];
+      console.log(`Utworozno szescian ${i}`);
+
+      cubes.push(
+        <SquareMesh
+          key={i}
+          position={[p1, p2, p3]}
+          color={color}
+          paleta={paleta}
+        />
+      );
+    }
+    return cubes;
+  }
+
+  function SquareMesh({ position, color, paleta }) {
+    const [hovered, setHovered] = useState(false);
+    return (
+      <mesh
+        // castShadow                                                        Tworzy cien od tam skad pada swiatlo
+        position={position}
+        onPointerOver={(e) => {
+          // Funkcja która wwykonuje sie gdy NAJEDZIEMY na dany obiekt
+          e.stopPropagation(); // Blokuje przecinania sie kursora z obiektami niczym strzala
+
+          setHovered(true);
+          {
+            document.body.style.cursor = "pointer";
+          }
+        }}
+        onPointerOut={() => {
+          // Funkcja która wwykonuje sie gdy ZEJDZIEMY z dany obiekt
+          setHovered(false);
+          {
+            document.body.style.cursor = "auto";
+          }
+        }}
+      >
+        <boxGeometry args={[paleta.height, paleta.deep, paleta.width]} />{" "}
+        {/* Twqorzy nam szecian o (szerokosc, wysokosc, glebokoscx)*/}
+        {/* Wlasnowosc danego obiekty (SZESCIANU) dt. jego materialu*/}
+        <meshStandardMaterial
+          color={hovered ? color : "blue"}
+          opacity={1}
+          transparent={true}
+        />
+      </mesh>
+    );
+  }
+
+  return (
+    <>
+      <Canvas // CANVAS komponent odpowiedzialny za 3D (dokąłdnie to WebGL opartego na Three.js)
+        shadows // Uruchamia cienie w calej scenie
+        camera={{ position: [0, 5, 10], fov: 50 }} // Ustawwia pozycja poczatkowa kamery
+        style={{ width: "100%", height: "100vh" }} // CANVAS ma szerokosc 100% oraz 100vh clej naszej strony WWW
+      >
+        {/* Światła */}
+        <ambientLight intensity={0.5} />
+        {/* Rodzaj oswietrlenia oraz jego intesywnosc*/}
+        {/*  Siawtrlo keirunkowe, castShodw - mozliwsoc rzucania cienia, pozycja skad jest zreodlo sitala, wszystko co dotyczy Shadow-mapSize oraz Shadow-camera doptryczy jakosc cieni - narazie nie istione do projektu */}
+        <directionalLight
+          castShadow
+          position={[5, 10, 5]}
+          intensity={1}
+          shadow-mapSize-width={1024}
+          shadow-mapSize-height={1024}
+          shadow-camera-far={50}
+          shadow-camera-left={-10}
+          shadow-camera-right={10}
+          shadow-camera-top={10}
+          shadow-camera-bottom={-10}
+        />
+
+        {InitilaSquareFunction("green")}
+
+        <OrbitControls />
+      </Canvas>
+    </>
+  );
+}
+
+export default Myscene;
