@@ -1,95 +1,190 @@
-import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { ProbnaFunkcja } from "./probny";
 
 function Myscene() {
-  //Funkcja oblicoznajace skranje opunkty na mapie
-  const paleta = {
-    width: 10,
-    height: 10,
-    deep: 15,
-  };
-
-  let ilość_towaru = 10;
-
-  function createSquare() {
-    let gap = 1,
-      punkt3d = [],
-      d1 = [],
-      d2 = [],
-      d3 = [];
-
-    let punkt0 = [(d1[0] = 0), (d2[0] = 0), (d3[0] = 0)];
-
-    const tabela_punktow_krancowych = [];
-    tabela_punktow_krancowych[0] = punkt0;
-
-    for (let i = 1; i < ilość_towaru; i++) {
-      d1[i] = d1[i - 1] + paleta.width + gap;
-      d2[i] = d2[i - 1];
-      d3[i] = d3[i - 1];
-      punkt3d[i] = [d1[i], d2[i], d3[i]];
-
-      tabela_punktow_krancowych.push(punkt3d[i]);
-    }
-
-    return tabela_punktow_krancowych;
-  }
-  let global_punkty = createSquare();
-
-  function InitilaSquareFunction(color) {
-    const cubes = [];
-    for (let i = 0; i < ilość_towaru; i++) {
-      let p1 = global_punkty[i][0];
-      let p2 = global_punkty[i][1];
-      let p3 = global_punkty[i][2];
-      console.log(`Utworozno szescian ${i}`);
-
-      cubes.push(
-        <SquareMesh
-          key={i}
-          position={[p1, p2, p3]}
-          color={color}
-          paleta={paleta}
-        />
-      );
-    }
-    return cubes;
-  }
-
-  function SquareMesh({ position, color, paleta }) {
-    const [hovered, setHovered] = useState(false);
+  let mainColor = "darkgrey";
+  let BaseColor = "#435363ff";
+  function Kabina() {
     return (
-      <mesh
-        // castShadow                                                        Tworzy cien od tam skad pada swiatlo
-        position={position}
-        onPointerOver={(e) => {
-          // Funkcja która wwykonuje sie gdy NAJEDZIEMY na dany obiekt
-          e.stopPropagation(); // Blokuje przecinania sie kursora z obiektami niczym strzala
+      <>
+        {/* //Podstawa */}
+        <mesh position={[0.5, 4, 1]}>
+          <boxGeometry args={[5, 6, 6]} />
+          <meshStandardMaterial
+            color={mainColor}
+            opacity={1}
+            transparent={false}
+          />
+        </mesh>
+      </>
+    );
+  }
 
-          setHovered(true);
-          {
-            document.body.style.cursor = "pointer";
-          }
-        }}
-        onPointerOut={() => {
-          // Funkcja która wwykonuje sie gdy ZEJDZIEMY z dany obiekt
-          setHovered(false);
-          {
-            document.body.style.cursor = "auto";
-          }
-        }}
-      >
-        <boxGeometry args={[paleta.height, paleta.deep, paleta.width]} />{" "}
-        {/* Twqorzy nam szecian o (szerokosc, wysokosc, glebokoscx)*/}
-        {/* Wlasnowosc danego obiekty (SZESCIANU) dt. jego materialu*/}
-        <meshStandardMaterial
-          color={hovered ? color : "blue"}
-          opacity={1}
-          transparent={true}
-        />
+  function PakaDol() {
+    return (
+      <>
+        {/* //Podstawa */}
+        <mesh position={[9, 1.5, 1]}>
+          <boxGeometry args={[12, 1, 6]} />
+          <meshStandardMaterial
+            color={mainColor}
+            opacity={1}
+            transparent={false}
+          />
+        </mesh>
+      </>
+    );
+  }
+  function SzybyPaka() {
+    return (
+      <>
+        {/* //Podstawa */}
+        <mesh position={[-0.6, 5, 1]}>
+          <boxGeometry args={[1.5, 2.2, 6.2]} />
+          <meshStandardMaterial
+            color={"lightgrey"}
+            opacity={0.5}
+            transparent={false}
+          />
+        </mesh>
+      </>
+    );
+  }
+
+  function SzybyPakaFront() {
+    return (
+      <>
+        {/* //Podstawa */}
+        <mesh position={[-1.5, 5, 1]}>
+          <boxGeometry args={[1.2, 2.2, 5.2]} />
+          <meshStandardMaterial
+            color={"lightgrey"}
+            opacity={0.5}
+            transparent={false}
+          />
+        </mesh>
+      </>
+    );
+  }
+
+  function CylinderPrism(x, y, z, a, b, c) {
+    return (
+      <mesh position={[a, b, c]} castShadow rotation={[Math.PI / 2, 0, 0]}>
+        {/* radiusTop, radiusBottom, height, radialSegments */}
+        <cylinderGeometry args={[x, y, z, 32]} />
+        <meshStandardMaterial color="grey" />
       </mesh>
+    );
+  }
+
+  function BurtaLewa() {
+    return (
+      <>
+        {/* //Podstawa */}
+        <mesh position={[9, 3, -1.9]}>
+          <boxGeometry args={[12, 2, 0.2]} />
+          <meshStandardMaterial
+            color={"white"}
+            opacity={1}
+            transparent={true}
+          />
+        </mesh>
+      </>
+    );
+  }
+
+  function BurtaPrawa() {
+    return (
+      <>
+        {/* //Podstawa */}
+        <mesh position={[9, 3, 3.9]}>
+          <boxGeometry args={[12, 2, 0.2]} />
+          <meshStandardMaterial
+            color={"white"}
+            opacity={0.3}
+            transparent={true}
+          />
+        </mesh>
+      </>
+    );
+  }
+
+  function BurtaTył() {
+    return (
+      <>
+        {/* //Podstawa */}
+        <mesh position={[14.9, 3, 1]}>
+          <boxGeometry args={[0.2, 2, 5.6]} />
+          <meshStandardMaterial
+            color={"white"}
+            opacity={0.8}
+            transparent={true}
+          />
+        </mesh>
+      </>
+    );
+  }
+
+  function PodstawaHDS() {
+    return (
+      <>
+        {/* //Podstawa */}
+        <mesh position={[16.2, 2, 1]}>
+          <boxGeometry args={[2, 2, 4.4]} />
+          <meshStandardMaterial
+            color={mainColor}
+            opacity={1}
+            transparent={true}
+          />
+        </mesh>
+      </>
+    );
+  }
+
+  function KorpusHDS() {
+    return (
+      <>
+        {/* //Podstawa */}
+        <mesh position={[16.2, 4, 1]}>
+          <boxGeometry args={[1, 6, 1]} />
+          <meshStandardMaterial
+            color={mainColor}
+            opacity={1}
+            transparent={true}
+          />
+        </mesh>
+      </>
+    );
+  }
+
+  function Ramie1HDS() {
+    return (
+      <>
+        {/* //Podstawa */}
+        <mesh rotation={[0, 0, Math.PI / 4]} position={[14.9, 8, 1]}>
+          <boxGeometry args={[1, 4, 1]} />
+          <meshStandardMaterial
+            color={mainColor}
+            opacity={1}
+            transparent={true}
+          />
+        </mesh>
+      </>
+    );
+  }
+  function Ramie2HDS() {
+    return (
+      <>
+        {/* //Podstawa */}
+        <mesh rotation={[0, 0, Math.PI / 2]} position={[11.9, 9.3, 1]}>
+          <boxGeometry args={[1, 4, 1]} />
+          <meshStandardMaterial
+            color={mainColor}
+            opacity={1}
+            transparent={true}
+          />
+        </mesh>
+      </>
     );
   }
 
@@ -97,8 +192,8 @@ function Myscene() {
     <>
       <Canvas // CANVAS komponent odpowiedzialny za 3D (dokąłdnie to WebGL opartego na Three.js)
         shadows // Uruchamia cienie w calej scenie
-        camera={{ position: [0, 5, 10], fov: 50 }} // Ustawwia pozycja poczatkowa kamery
-        style={{ width: "100%", height: "100vh" }} // CANVAS ma szerokosc 100% oraz 100vh clej naszej strony WWW
+        camera={{ position: [28, 20, 20], fov: 50 }} // Ustawwia pozycja poczatkowa kamery
+        style={{ width: "100%", height: "100vh", background: "#35495bff" }} // CANVAS ma szerokosc 100% oraz 100vh clej naszej strony WWW
       >
         {/* Światła */}
         <ambientLight intensity={0.5} />
@@ -106,7 +201,7 @@ function Myscene() {
         {/*  Siawtrlo keirunkowe, castShodw - mozliwsoc rzucania cienia, pozycja skad jest zreodlo sitala, wszystko co dotyczy Shadow-mapSize oraz Shadow-camera doptryczy jakosc cieni - narazie nie istione do projektu */}
         <directionalLight
           castShadow
-          position={[5, 10, 5]}
+          position={[9, 10, 4]}
           intensity={1}
           shadow-mapSize-width={1024}
           shadow-mapSize-height={1024}
@@ -116,10 +211,34 @@ function Myscene() {
           shadow-camera-top={10}
           shadow-camera-bottom={-10}
         />
-
-        {InitilaSquareFunction("green")}
+        {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+          <planeGeometry args={[100, 100]} />
+          <meshStandardMaterial color={BaseColor} />
+        </mesh> */}
+        {/* <gridHelper args={[100, 100]} /> */}
 
         <OrbitControls />
+
+        {/* Elementy Trucka */}
+        {Kabina()}
+        {CylinderPrism(1, 1, 7, 1, 1, 1)}
+        {CylinderPrism(1, 1, 7, 10, 1, 1)}
+        {CylinderPrism(1, 1, 7, 12.5, 1, 1)}
+        {PakaDol()}
+        {SzybyPaka()}
+        {SzybyPakaFront()}
+        {BurtaLewa()}
+        {BurtaPrawa()}
+        {BurtaTył()}
+        {PodstawaHDS()}
+        {KorpusHDS()}
+        {Ramie1HDS()}
+        {Ramie2HDS()}
+
+        <mesh position={[0, 0.5, 0]}>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color="red" />
+        </mesh>
       </Canvas>
     </>
   );
