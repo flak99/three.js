@@ -1,12 +1,14 @@
 import "./App.css";
 
 import MyScene from "./MyScedne";
+import Trailer from "./Trailer";
 
 function App() {
   return (
     <div>
-      <MyScene></MyScene>
-      {/* <SimpleTruck></SimpleTruck> */}
+      <h1>Tutaj wyswietlaja sie pojazdy/naczepy</h1>
+      {/* <MyScene></MyScene> */}
+      {/* <Trailer /> */}
     </div>
   );
 }
